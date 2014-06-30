@@ -7,8 +7,8 @@ import random
 payoff = [[[4,4],[0,3]],[[3,0],[2,2]]]
 n = 100  # the number of players
 T = 1000
-upsilon = 0  # ε
-x_0 = random.randint(0,n)  # determine X_0
+upsilon = 0.1  # ε
+x_0 = np.random.binomial(n,1/3)  # determine X_0
 one_payoff =np.transpose(np.transpose(payoff)[0])
 current_x = x_0
 x_list = [x_0]
@@ -34,11 +34,11 @@ for i in range(T):
         chosen_act = random.randint(0,1)
     current_x = current_x -former_act + chosen_act  # 1→0なら1減り0→1なら1増える
 # X_tの推移
-"""
+
 plt.plot(x_list, 'b-', label='X_t')
 plt.legend()
 plt.show()
-"""
+
 
 # X_tの平均の推移
 """
