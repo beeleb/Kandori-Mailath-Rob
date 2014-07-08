@@ -1,6 +1,4 @@
-
-<!-- saved from url=(0079)https://raw.githubusercontent.com/jstac/quant-econ/master/quantecon/mc_tools.py -->
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head><body><pre style="word-wrap: break-word; white-space: pre-wrap;">"""
+"""
 Filename: mc_tools.py
 Authors: John Stachurski and Thomas J. Sargent
 """
@@ -67,5 +65,3 @@ def mc_sample_path(P, init=0, sample_size=1000):
     for t in range(sample_size - 1):
         X[t+1] = P_dist[X[t]].draw()
     return X
-
-</pre></body></html>

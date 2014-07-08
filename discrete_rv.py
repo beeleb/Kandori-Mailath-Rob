@@ -1,6 +1,4 @@
-
-<!-- saved from url=(0082)https://raw.githubusercontent.com/jstac/quant-econ/master/quantecon/discrete_rv.py -->
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head><body><pre style="word-wrap: break-word; white-space: pre-wrap;">"""
+"""
 Filename: discrete_rv.py
 Authors: Thomas Sargent, John Stachurski 
 
@@ -41,5 +39,3 @@ class DiscreteRV(object):
         """
         return self.Q.searchsorted(uniform(0, 1, size=k)) 
 
-
-</pre></body></html>
