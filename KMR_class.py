@@ -1,4 +1,4 @@
-from __future__ import division
+ï»¿from __future__ import division
 import random
 import matplotlib.pyplot as plt
 import numpy as np
@@ -31,19 +31,19 @@ class KMR:
         self.p = p
         self.xs = xs
         
-    def det_X(self):#‘JˆÚs—ñ‚ğ‚Â‚­‚é
+    def det_X(self):#é·ç§»è¡Œåˆ—ã‚’ã¤ãã‚‹
         self.X = np.zeros((self.n+1,self.n+1))
         expay0 = np.empty(2) 
         expay1 = np.empty(2) 
         for k in range(1,self.n):
-            #’¼‘O‚Ü‚Å0‚¾‚Á‚½l‚ª‘I‚Î‚ê‚½‚Ìs“®‘I‘ğ‚É‚æ‚éŠú‘Ò—˜“¾
+            #ç›´å‰ã¾ã§0ã ã£ãŸäººãŒé¸ã°ã‚ŒãŸæ™‚ã®è¡Œå‹•é¸æŠã«ã‚ˆã‚‹æœŸå¾…åˆ©å¾—
             expay0[0] = self.one_pay[0][0]*(self.n-k-1)/(self.n-1)+self.one_pay[0][1]*k/(self.n-1)
             expay0[1] = self.one_pay[1][0]*(self.n-k-1)/(self.n-1)+self.one_pay[1][1]*k/(self.n-1)
-            #’¼‘O‚Ü‚Å1‚¾‚Á‚½l‚ª‘I‚Î‚ê‚½‚Ìs“®‘I‘ğ‚É‚æ‚éŠú‘Ò—˜“¾
+            #ç›´å‰ã¾ã§1ã ã£ãŸäººãŒé¸ã°ã‚ŒãŸæ™‚ã®è¡Œå‹•é¸æŠã«ã‚ˆã‚‹æœŸå¾…åˆ©å¾—
             expay1[0] = self.one_pay[0][0]*(self.n-k)/(self.n-1)+self.one_pay[0][1]*(k-1)/(self.n-1)
             expay1[1] = self.one_pay[1][0]*(self.n-k)/(self.n-1)+self.one_pay[1][1]*(k-1)/(self.n-1)
             if expay1[0] > expay1[1]:
-                self.X[k][k-1]=(k/self.n)*(1-self.epsi*0.5) #kl‚©‚çk-1l‚É‚È‚éŠm—¦
+                self.X[k][k-1]=(k/self.n)*(1-self.epsi*0.5) #käººã‹ã‚‰k-1äººã«ãªã‚‹ç¢ºç‡
                 self.X[k][k]=(k/self.n)*self.epsi*0.5
             elif expay1[0]==expay1[1]:
                 self.X[k][k-1]=(k/self.n)*0.5
@@ -52,8 +52,8 @@ class KMR:
                 self.X[k][k-1]= (k/self.n)*self.epsi*0.5
                 self.X[k][k] = (k/self.n)*(1-self.epsi*0.5)                
             if expay0[1]>expay0[0]:
-                self.X[k][k+1]=((self.n-k)/self.n)*(1-self.epsi*0.5) #kl‚©‚çk+1l‚É‚È‚éŠm—¦
-                self.X[k][k]+=((self.n-k)/self.n)*self.epsi*0.5 #X[k][k]‚Íã‚Å‚à’è‚ß‚Ä‚¢‚é‚Ì‚Åã‘‚«‚Å‚È‚­‰Á‚¦‚Ä‚¢‚é
+                self.X[k][k+1]=((self.n-k)/self.n)*(1-self.epsi*0.5) #käººã‹ã‚‰k+1äººã«ãªã‚‹ç¢ºç‡
+                self.X[k][k]+=((self.n-k)/self.n)*self.epsi*0.5 #X[k][k]ã¯ä¸Šã§ã‚‚å®šã‚ã¦ã„ã‚‹ã®ã§ä¸Šæ›¸ãã§ãªãåŠ ãˆã¦ã„ã‚‹
             elif expay0[1]==expay0[0]:
                 self.X[k][k+1] = ((self.n-k)/self.n)*0.5
                 self.X[k][k] += ((self.n-k)/self.n)*0.5
@@ -79,10 +79,10 @@ class KMR:
 
 
 """
-“ü—Í‚Ì—á
+å…¥åŠ›ã®ä¾‹
 payoff = [[4,0],[3,2]]
 set_pay(payoff)
-f = KMR(10,1/3,0.1)  # (l”,“ñ€•ª•z‚ÌŠm—¦,ƒÃ)
+f = KMR(10,1/3,0.1)  # (äººæ•°,äºŒé …åˆ†å¸ƒã®ç¢ºç‡,Îµ)
 f.det_X()
 f.simplot(100000)
 """
