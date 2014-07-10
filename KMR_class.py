@@ -1,9 +1,10 @@
-﻿from __future__ import division
+from __future__ import division
 import random
 import matplotlib.pyplot as plt
 import numpy as np
 from discrete_rv import DiscreteRV
-from mc_tools import mc_sample_path
+from mc_tools import mc_sample_path, mc_compute_stationary
+
 
 def set_pay(pf):  # 2人分の利得表を入れると1人分に変形して返します
     global one_payoff
@@ -102,6 +103,17 @@ class KMR:
     def histplot(self,t,times):
         self.hist(t,times)
         plt.show()
+        
+    def equilibrium(self):
+        self.det_X()
+        Y = mc_compute_stationary(self.X)
+        tit = str(self.n)+' people,  '+'epsilon = '+str(self.epsi)
+        plt.bar(range(self.n+1), Y, align='center')
+        plt.xlim([-0.5, self.n+0.5])
+        plt.ylim([0,1])
+        plt.title(tit)        
+        plt.show()
+
 
 """
 #入力の例
