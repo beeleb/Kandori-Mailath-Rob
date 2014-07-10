@@ -4,8 +4,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 from discrete_rv import DiscreteRV
 from mc_tools import mc_sample_path
-
-def set_pay(pf):  # 2人分の利得表を入れると1人分に変形して返します
+"""
+p = 1/3
+n = 10
+t = 100000
+epsilon = 0.1
+payoff = [[[4,4],[0,3]],[[3,0],[2,2]]]
+"""
+def set_pay(pf):
     global one_payoff
     WDT='Wrong Data Type ! '
     if type(pf) == int:
@@ -23,7 +29,7 @@ def set_pay(pf):  # 2人分の利得表を入れると1人分に変形して返�
             print str(one_payoff)
         else:
             print WDT
-#set_payを使わない場合はone_payoffに二重のlistかtupleでプレイヤー1人の利得を入れてください
+
 
 
 class KMR:
@@ -59,7 +65,7 @@ class KMR:
                 self.X[k][k] = (k/self.n)*(1-self.epsi*0.5)                
             if expay0[1]>expay0[0]:
                 self.X[k][k+1]=((self.n-k)/self.n)*(1-self.epsi*0.5) #k人からk+1人になる確率
-                self.X[k][k] += ((self.n-k)/self.n)*self.epsi*0.5 #X[k][k]は上でも定めているので上書きでなく加えている
+                self.X[k][k]+=((self.n-k)/self.n)*self.epsi*0.5 #X[k][k]は上でも定めているので上書きでなく加えている
             elif expay0[1]==expay0[0]:
                 self.X[k][k+1] = ((self.n-k)/self.n)*0.5
                 self.X[k][k] += ((self.n-k)/self.n)*0.5
@@ -82,8 +88,6 @@ class KMR:
     def simplot(self,t):
         self.sim(t)
         plt.plot(self.xs, 'b-', label='X_t')
-        tit = str(self.n)+' people,  '+'p = '+str(round(self.p,2))+'\n'+'epsilon = '+str(self.epsi)+',  time length = '+str(t)
-        plt.title(tit)
         plt.legend()
         plt.show()
         
@@ -94,23 +98,20 @@ class KMR:
         for i in range(times):
             self.sim(t)
             self.x_ts.append(self.xs[-1])
-        ax = plt.subplot(111)
-        ax.hist(self.x_ts, alpha=0.6, bins=10)     
-        tit = str(self.n)+' people,  '+'p = '+str(round(self.p,2))+',  '+'epsilon = '+str(self.epsi)+'\n'+'time length = '+str(t)+',  '+str(times)+'times'
-        ax.set_title(tit)
             
     def histplot(self,t,times):
         self.hist(t,times)
+        ax = plt.subplot(111)
+        ax.hist(self.x_ts, alpha=0.6, bins=10)
         plt.show()
 
 
-
-
 """
-#入力の例
+入力の例
 payoff = [[[4,4],[0,3]],[[3,0],[2,2]]]
 set_pay(payoff)
-f = KMR(10,1/3,0.01)  # (人数,二項分布の確率,ε)
+f = KMR(10,1/3,0.1)  # (人数,二項分布の確率,ε)
+f.det_X()
 f.simplot(100000) # (時間の長さ)
-#f.histplot(10000,1000)  # (時間の長さ、回数)
+f.histplot(10000,100)  # (時間の長さ、回数)
 """
