@@ -2,6 +2,7 @@ from __future__ import division
 import random
 import matplotlib.pyplot as plt
 import numpy as np
+from scipy.stats import binom
 from discrete_rv import DiscreteRV
 from mc_tools import mc_sample_path, mc_compute_stationary
 
@@ -9,16 +10,16 @@ from mc_tools import mc_sample_path, mc_compute_stationary
 def set_pay(pf):  # 2人分の利得表を入れると1人分に変形して返します
     global one_payoff
     WDT='Wrong Data Type ! '
-    if type(pf) == int:
+    if pf is int:
         print WDT
-    elif type(pf[0]) ==int:
+    elif pf[0] is int:
         print WDT
     else:
-        if type(pf[0][0]) == list or type(pf[0][0]) ==tuple:
+        if pf[0][0] is list or tuple:
             one_payoff = np.transpose(np.transpose(pf)[0])
             print'OK. one_payoff is'
             print str(one_payoff)
-        elif type(pf[0][0]) == int:
+        elif pf[0][0] is int:
             one_payoff = pf
             print'OK. one_payoff is'
             print str(one_payoff)
@@ -38,7 +39,7 @@ class KMR:
         self.x_0 = 0
         self.x_ts = []
         
-    def det_X(self):#遷移行列をつくる
+    def det_X(self):#逐次改訂での遷移行列をつくる
         self.X = np.zeros((self.n+1,self.n+1))
         expay0 = np.empty(2) 
         expay1 = np.empty(2) 
@@ -88,6 +89,36 @@ class KMR:
         plt.legend()
         plt.show()
         
+    def det_X_st(self):  # 同時改訂での遷移行列をつくる
+        self.X = np.zeros((self.n+1,self.n+1))
+        list=[]
+        for i in range(self.n+1):
+            list.append(i)
+        expay = np.empty(2)  
+        for k in range(0,self.n+1):
+            #各人の行動選択による期待利得
+            expay[0] = self.one_pay[0][0]*(self.n-k)/(self.n)+self.one_pay[0][1]*k/(self.n)
+            expay[1] = self.one_pay[1][0]*(self.n-k)/(self.n)+self.one_pay[1][1]*k/(self.n)
+            if expay[0] > expay[1]:
+                self.X[k] = binom.pmf(list,self.n,self.epsi)
+            elif expay[0] == expay[1]:
+                self.X[k] = binom.pmf(list,self.n,0.5)
+            else:
+                self.X[k] = binom.pmf(list,self.n,1-self.epsi)
+                
+    def sim_st(self, t):
+        self.det_X_st()
+        self.set_x0()
+        self.xs = mc_sample_path(self.X,init=self.x_0,sample_size=t)
+        
+    def simplot_st(self, t):
+        self.sim_st(t)
+        plt.plot(self.xs, 'b-', label='X_t')
+        tit = str(self.n)+' people,  '+'p = '+str(round(self.p,2))+'\n'+'epsilon = '+str(self.epsi)+',  time length = '+str(t)
+        plt.title(tit)
+        plt.legend()
+        plt.show()
+    
     def hist(self,t,times): 
         self.x_ts = []
         self.det_X()
@@ -113,13 +144,23 @@ class KMR:
         plt.ylim([0,1])
         plt.title(tit)        
         plt.show()
+        
+    def equilibrium_st(self):
+        self.det_X_st()
+        Y = mc_compute_stationary(self.X)
+        tit = str(self.n)+' people,  '+'epsilon = '+str(self.epsi)
+        plt.bar(range(self.n+1), Y, align='center')
+        plt.xlim([-0.5, self.n+0.5])
+        plt.ylim([0,1])
+        plt.title(tit)        
+        plt.show()
 
 
-"""
 #入力の例
 payoff = [[[4,4],[0,3]],[[3,0],[2,2]]]
 set_pay(payoff)
-f = KMR(10,1/3,0.01)  # (人数,二項分布の確率,ε)
-f.simplot(100000) # (時間の長さ)
+f = KMR(4,1/3,0.1)  # (人数,二項分布の確率,ε)
+#f.simplot(100000)
+#f.simplot_st(100000) # (時間の長さ)
 #f.histplot(10000,1000)  # (時間の長さ、回数)
-"""
+
