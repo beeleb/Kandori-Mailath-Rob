@@ -112,7 +112,7 @@ class KMR:
         self.path(t)
         plt.hist(self.xs, bins=10)
         plt.ylim([0,t])
-        tit = str(self.n)+' people,  '+self.mode+' mode, '+'p = '+str(round(self.p,2))+',  '+'\n'+'epsilon = '+str(self.epsi)+'time length = '+str(t)
+        tit = str(self.n)+' people,  '+self.mode+' mode, '+'p = '+str(round(self.p,2))+',  '+'\n'+'epsilon = '+str(self.epsi)+',  time length = '+str(t)
         plt.title(tit)
         plt.show()
         
@@ -129,7 +129,7 @@ class KMR:
 #入力の例
 payoff = [[[4,4],[0,3]],[[3,0],[2,2]]]
 set_pay(payoff)
-f = KMR(4,1/3,0.1,'sequential')  # (人数, 二項分布の確率, ε, モード)
-#f.simplot(100000)
+f = KMR(10,0,0.1,'sequential')  # (人数, 二項分布の確率, ε, モード)
+#f.plot(100000)
 #f.hist(100000)
 #f.equilibrium()
