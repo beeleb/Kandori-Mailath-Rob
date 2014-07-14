@@ -5,3 +5,5 @@ Kandori-Mailath-Rob
 <img src="plot.png" alt=" transition" width="480" hspace="40"/>
 <img src="histogram.png" alt="histogram" width="480" hspace="40"/>
 <img src="equilibrium.png" alt="histogram" width="480" hspace="40"/>
+
+[simultaneousモードでの実行結果](http://nbviewer.ipython.org/github/USERNAME/Kandori-Mailath-Rob/blob/master/KMR_sim.ipynb)

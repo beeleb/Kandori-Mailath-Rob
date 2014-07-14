@@ -1,4 +1,4 @@
-from __future__ import division
+﻿from __future__ import division
 import random
 import matplotlib.pyplot as plt
 import numpy as np
@@ -126,6 +126,7 @@ class KMR:
         plt.title(tit)        
         plt.show()
         
+"""
 #入力の例
 payoff = [[[4,4],[0,3]],[[3,0],[2,2]]]
 set_pay(payoff)
@@ -133,3 +134,4 @@ f = KMR(10,0,0.1,'sequential')  # (人数, 二項分布の確率, ε, モード)
 #f.plot(100000)
 #f.hist(100000)
 #f.equilibrium()
+"""
