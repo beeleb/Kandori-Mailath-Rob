@@ -29,138 +29,107 @@ def set_pay(pf):  # 2人分の利得表を入れると1人分に変形して返�
 
 
 class KMR:
-    def __init__(self,n,p,epsilon):
+    def __init__(self,n,p,epsilon,mode):
         self.one_pay = one_payoff
         self.epsi = epsilon
         self.n = n
+        self.mode = mode  # 'sequential'or 'simultaneous'
         self.X = 0
         self.p = p
         self.xs = 0
         self.x_0 = 0
-        self.x_ts = []
         
-    def det_X(self):#逐次改訂での遷移行列をつくる
+    def set_move(self):
         self.X = np.zeros((self.n+1,self.n+1))
-        expay0 = np.empty(2) 
-        expay1 = np.empty(2) 
-        for k in range(1,self.n):
-            #直前まで0だった人が選ばれた時の行動選択による期待利得
-            expay0[0] = self.one_pay[0][0]*(self.n-k-1)/(self.n-1)+self.one_pay[0][1]*k/(self.n-1)
-            expay0[1] = self.one_pay[1][0]*(self.n-k-1)/(self.n-1)+self.one_pay[1][1]*k/(self.n-1)
-            #直前まで1だった人が選ばれた時の行動選択による期待利得
-            expay1[0] = self.one_pay[0][0]*(self.n-k)/(self.n-1)+self.one_pay[0][1]*(k-1)/(self.n-1)
-            expay1[1] = self.one_pay[1][0]*(self.n-k)/(self.n-1)+self.one_pay[1][1]*(k-1)/(self.n-1)
-            if expay1[0] > expay1[1]:
-                self.X[k][k-1]=(k/self.n)*(1-self.epsi*0.5) #k人からk-1人になる確率
-                self.X[k][k]=(k/self.n)*self.epsi*0.5
-            elif expay1[0]==expay1[1]:
-                self.X[k][k-1]=(k/self.n)*0.5
-                self.X[k][k]=(k/self.n)*0.5
-            else:
-                self.X[k][k-1]= (k/self.n)*self.epsi*0.5
-                self.X[k][k] = (k/self.n)*(1-self.epsi*0.5)                
-            if expay0[1]>expay0[0]:
-                self.X[k][k+1]=((self.n-k)/self.n)*(1-self.epsi*0.5) #k人からk+1人になる確率
-                self.X[k][k] += ((self.n-k)/self.n)*self.epsi*0.5 #X[k][k]は上でも定めているので上書きでなく加えている
-            elif expay0[1]==expay0[0]:
-                self.X[k][k+1] = ((self.n-k)/self.n)*0.5
-                self.X[k][k] += ((self.n-k)/self.n)*0.5
-            else:
-                self.X[k][k+1] = ((self.n-k)/self.n)*self.epsi*0.5
-                self.X[k][k] += ((self.n-k)/self.n)*(1-self.epsi*0.5)
-        self.X[0][0] = 1-self.epsi*0.5
-        self.X[0][1] = self.epsi*0.5
-        self.X[self.n][self.n-1] = self.epsi*0.5
-        self.X[self.n][self.n] = 1-self.epsi*0.5
-    
+        if self.mode == 'sequential':  # 逐次改訂
+            expay0 = np.empty(2) 
+            expay1 = np.empty(2) 
+            for k in range(1,self.n):
+                #直前まで0だった人が選ばれた時の行動選択による期待利得
+                expay0[0] = self.one_pay[0][0]*(self.n-k-1)/(self.n-1)+self.one_pay[0][1]*k/(self.n-1)
+                expay0[1] = self.one_pay[1][0]*(self.n-k-1)/(self.n-1)+self.one_pay[1][1]*k/(self.n-1)
+                #直前まで1だった人が選ばれた時の行動選択による期待利得
+                expay1[0] = self.one_pay[0][0]*(self.n-k)/(self.n-1)+self.one_pay[0][1]*(k-1)/(self.n-1)
+                expay1[1] = self.one_pay[1][0]*(self.n-k)/(self.n-1)+self.one_pay[1][1]*(k-1)/(self.n-1)
+                if expay1[0] > expay1[1]:
+                    self.X[k][k-1]=(k/self.n)*(1-self.epsi*0.5) #k人からk-1人になる確率
+                    self.X[k][k]=(k/self.n)*self.epsi*0.5
+                elif expay1[0]==expay1[1]:
+                    self.X[k][k-1]=(k/self.n)*0.5
+                    self.X[k][k]=(k/self.n)*0.5
+                else:
+                    self.X[k][k-1]= (k/self.n)*self.epsi*0.5
+                    self.X[k][k] = (k/self.n)*(1-self.epsi*0.5)                
+                if expay0[1]>expay0[0]:
+                    self.X[k][k+1]=((self.n-k)/self.n)*(1-self.epsi*0.5) #k人からk+1人になる確率
+                    self.X[k][k] += ((self.n-k)/self.n)*self.epsi*0.5 #X[k][k]は上でも定めているので上書きでなく加えている
+                elif expay0[1]==expay0[0]:
+                    self.X[k][k+1] = ((self.n-k)/self.n)*0.5
+                    self.X[k][k] += ((self.n-k)/self.n)*0.5
+                else:
+                    self.X[k][k+1] = ((self.n-k)/self.n)*self.epsi*0.5
+                    self.X[k][k] += ((self.n-k)/self.n)*(1-self.epsi*0.5)
+            self.X[0][0] = 1-self.epsi*0.5
+            self.X[0][1] = self.epsi*0.5
+            self.X[self.n][self.n-1] = self.epsi*0.5
+            self.X[self.n][self.n] = 1-self.epsi*0.5
+            
+        elif self.mode == 'simultaneous':  # 同時改訂
+            list=[]
+            for i in range(self.n+1):
+                list.append(i)
+            expay = np.empty(2)  
+            for k in range(0,self.n+1):
+                #各人の行動選択による期待利得
+                expay[0] = self.one_pay[0][0]*(self.n-k)/(self.n)+self.one_pay[0][1]*k/(self.n)
+                expay[1] = self.one_pay[1][0]*(self.n-k)/(self.n)+self.one_pay[1][1]*k/(self.n)
+                if expay[0] > expay[1]:
+                    self.X[k] = binom.pmf(list,self.n,self.epsi)
+                elif expay[0] == expay[1]:
+                    self.X[k] = binom.pmf(list,self.n,0.5)
+                else:
+                    self.X[k] = binom.pmf(list,self.n,1-self.epsi)
+        else:
+            print 'The mode '+ self.mode+'is Unknown. Check your input.'
+
     def set_x0(self):
         self.x_0 = np.random.binomial(self.n,self.p)  # determine X_0
     
-    def sim(self, t):
-        self.det_X()
+    def path(self, t):
+        self.set_move()
         self.set_x0()
         self.xs = mc_sample_path(self.X,init=self.x_0,sample_size=t)
         
-    def simplot(self,t):
-        self.sim(t)
+    def plot(self,t):
+        self.path(t)
         plt.plot(self.xs, 'b-', label='X_t')
-        tit = str(self.n)+' people,  '+'p = '+str(round(self.p,2))+'\n'+'epsilon = '+str(self.epsi)+',  time length = '+str(t)
+        tit = str(self.n)+' people,  '+self.mode+' mode, '+'p = '+str(round(self.p,2))+'\n'+'epsilon = '+str(self.epsi)+',  time length = '+str(t)
         plt.title(tit)
         plt.legend()
         plt.show()
-        
-    def det_X_st(self):  # 同時改訂での遷移行列をつくる
-        self.X = np.zeros((self.n+1,self.n+1))
-        list=[]
-        for i in range(self.n+1):
-            list.append(i)
-        expay = np.empty(2)  
-        for k in range(0,self.n+1):
-            #各人の行動選択による期待利得
-            expay[0] = self.one_pay[0][0]*(self.n-k)/(self.n)+self.one_pay[0][1]*k/(self.n)
-            expay[1] = self.one_pay[1][0]*(self.n-k)/(self.n)+self.one_pay[1][1]*k/(self.n)
-            if expay[0] > expay[1]:
-                self.X[k] = binom.pmf(list,self.n,self.epsi)
-            elif expay[0] == expay[1]:
-                self.X[k] = binom.pmf(list,self.n,0.5)
-            else:
-                self.X[k] = binom.pmf(list,self.n,1-self.epsi)
-                
-    def sim_st(self, t):
-        self.det_X_st()
-        self.set_x0()
-        self.xs = mc_sample_path(self.X,init=self.x_0,sample_size=t)
-        
-    def simplot_st(self, t):
-        self.sim_st(t)
-        plt.plot(self.xs, 'b-', label='X_t')
-        tit = str(self.n)+' people,  '+'p = '+str(round(self.p,2))+'\n'+'epsilon = '+str(self.epsi)+',  time length = '+str(t)
+
+    def hist(self,t): 
+        self.path(t)
+        plt.hist(self.xs, bins=10)
+        plt.ylim([0,t])
+        tit = str(self.n)+' people,  '+self.mode+' mode, '+'p = '+str(round(self.p,2))+',  '+'\n'+'epsilon = '+str(self.epsi)+'time length = '+str(t)
         plt.title(tit)
-        plt.legend()
-        plt.show()
-    
-    def hist(self,t,times): 
-        self.x_ts = []
-        self.det_X()
-        self.set_x0()
-        for i in range(times):
-            self.sim(t)
-            self.x_ts.append(self.xs[-1])
-        ax = plt.subplot(111)
-        ax.hist(self.x_ts, alpha=0.6, bins=10)     
-        tit = str(self.n)+' people,  '+'p = '+str(round(self.p,2))+',  '+'epsilon = '+str(self.epsi)+'\n'+'time length = '+str(t)+',  '+str(times)+'times'
-        ax.set_title(tit)
-            
-    def histplot(self,t,times):
-        self.hist(t,times)
         plt.show()
         
     def equilibrium(self):
-        self.det_X()
+        self.set_move()
         Y = mc_compute_stationary(self.X)
-        tit = str(self.n)+' people,  '+'epsilon = '+str(self.epsi)
+        tit = str(self.n)+' people,  '+self.mode+' mode, '+'epsilon = '+str(self.epsi)
         plt.bar(range(self.n+1), Y, align='center')
         plt.xlim([-0.5, self.n+0.5])
         plt.ylim([0,1])
         plt.title(tit)        
         plt.show()
         
-    def equilibrium_st(self):
-        self.det_X_st()
-        Y = mc_compute_stationary(self.X)
-        tit = str(self.n)+' people,  '+'epsilon = '+str(self.epsi)
-        plt.bar(range(self.n+1), Y, align='center')
-        plt.xlim([-0.5, self.n+0.5])
-        plt.ylim([0,1])
-        plt.title(tit)        
-        plt.show()
-
-
 #入力の例
 payoff = [[[4,4],[0,3]],[[3,0],[2,2]]]
 set_pay(payoff)
-f = KMR(4,1/3,0.1)  # (人数,二項分布の確率,ε)
+f = KMR(4,1/3,0.1,'sequential')  # (人数, 二項分布の確率, ε, モード)
 #f.simplot(100000)
-#f.simplot_st(100000) # (時間の長さ)
-#f.histplot(10000,1000)  # (時間の長さ、回数)
-
+#f.hist(100000)
+#f.equilibrium()
